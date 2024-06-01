@@ -38,15 +38,15 @@ public class PersonServiceImpl implements PersonService {
 		return modelMapper.map(person, PersonDto.class);
 	}
 
-	  @Transactional(readOnly = true)
+	@Transactional(readOnly = true)
 	@Override
 	public Iterable<PersonDto> findPersonsByCity(String city) {
-		List<PersonDto> resPersons = personRepository.findByAddress_City(city).map(p -> modelMapper.map(p, PersonDto.class))
-				.toList();
+		List<PersonDto> resPersons = personRepository.findByAddress_City(city)
+				.map(p -> modelMapper.map(p, PersonDto.class)).toList();
 		return resPersons;
 	}
 
-	  @Transactional(readOnly = true)
+	@Transactional(readOnly = true)
 	@Override
 	public Iterable<PersonDto> findPersonsByAges(Integer minAge, Integer maxAge) {
 		LocalDate dateFrom = LocalDate.now().minusYears(maxAge);
@@ -63,7 +63,8 @@ public class PersonServiceImpl implements PersonService {
 		personRepository.save(person);
 		return modelMapper.map(person, PersonDto.class);
 	}
-	  @Transactional(readOnly = true)
+
+	@Transactional(readOnly = true)
 	@Override
 	public Iterable<PersonDto> findPersonsByName(String name) {
 		List<PersonDto> resPersons = personRepository.findByName(name).map(p -> modelMapper.map(p, PersonDto.class))
