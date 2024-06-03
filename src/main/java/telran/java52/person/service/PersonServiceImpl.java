@@ -37,11 +37,38 @@ public class PersonServiceImpl implements PersonService {
 		Person person = personRepository.findById(id).orElseThrow(PersonNotFoundException::new);
 		return modelMapper.map(person, PersonDto.class);
 	}
+	
+	@Transactional
+	@Override
+	public PersonDto deletePersonById(Integer id) {
+		Person person = personRepository.findById(id).orElseThrow(PersonNotFoundException::new);
+		personRepository.delete(person);
+		return modelMapper.map(person, PersonDto.class);
+	}
+	
+	@Transactional
+	@Override
+	public PersonDto updateName(Integer id, String name) {
+		Person person = personRepository.findById(id).orElseThrow(PersonNotFoundException::new);
+		person.setName(name);
+//		personRepository.save(person);
+		return modelMapper.map(person, PersonDto.class);
+	}
+
+	@Transactional
+	@Override
+	public PersonDto updateAddressById(Integer id, AddressDto newAddress) {
+		Person person = personRepository.findById(id).orElseThrow(PersonNotFoundException::new);
+		Address address = modelMapper.map(newAddress, Address.class);
+		person.setAddress(address);
+//		personRepository.save(person);
+		return modelMapper.map(person, PersonDto.class);
+	}
 
 	@Transactional(readOnly = true)
 	@Override
 	public Iterable<PersonDto> findPersonsByCity(String city) {
-		List<PersonDto> resPersons = personRepository.findByAddress_City(city)
+		List<PersonDto> resPersons = personRepository.findByAddressCityIgnoreCase(city)
 				.map(p -> modelMapper.map(p, PersonDto.class)).toList();
 		return resPersons;
 	}
@@ -55,43 +82,22 @@ public class PersonServiceImpl implements PersonService {
 				.map(p -> modelMapper.map(p, PersonDto.class)).toList();
 		return resPersons;
 	}
-
-	@Override
-	public PersonDto updateName(Integer id, String name) {
-		Person person = personRepository.findById(id).orElseThrow(PersonNotFoundException::new);
-		person.setName(name);
-		personRepository.save(person);
-		return modelMapper.map(person, PersonDto.class);
-	}
-
+	
 	@Transactional(readOnly = true)
 	@Override
 	public Iterable<PersonDto> findPersonsByName(String name) {
-		List<PersonDto> resPersons = personRepository.findByName(name).map(p -> modelMapper.map(p, PersonDto.class))
+		List<PersonDto> resPersons = personRepository.findByNameIgnoreCase(name).map(p -> modelMapper.map(p, PersonDto.class))
 				.toList();
 		return resPersons;
 	}
 
 	@Override
 	public Iterable<CityPopulationDto> populationByCities() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return personRepository.getCitiesPopulation();
 	}
+	
 
-	@Override
-	public PersonDto updateAddressById(Integer id, AddressDto newAddress) {
-		Person person = personRepository.findById(id).orElseThrow(PersonNotFoundException::new);
-		Address address = modelMapper.map(newAddress, Address.class);
-		person.setAddress(address);
-		personRepository.save(person);
-		return modelMapper.map(person, PersonDto.class);
-	}
 
-	@Override
-	public PersonDto deletePersonById(Integer id) {
-		Person person = personRepository.findById(id).orElseThrow(PersonNotFoundException::new);
-		personRepository.delete(person);
-		return modelMapper.map(person, PersonDto.class);
-	}
 
 }
