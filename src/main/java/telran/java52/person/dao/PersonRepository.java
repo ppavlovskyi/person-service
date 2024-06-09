@@ -13,15 +13,21 @@ import telran.java52.person.model.Person;
 
 public interface PersonRepository extends JpaRepository<Person, Integer> {
 	
-	@Query("select p from Citizen p where p.address.city=:cityName")
+//	@Query("select p from Person p where p.address.city=:cityName")
 	Stream<Person> findByAddressCityIgnoreCase(@Param("cityName") String city);
 	
 	Stream<Person> findByBirthDateBetween(LocalDate from, LocalDate to);
 	
-	@Query(value= "select p from Citizen p where p.name=?1")
+//	@Query(value= "select p from Person p where p.name=?1")
 	Stream<Person> findByNameIgnoreCase(String name);
 	
-	@Query(value = "select new telran.java52.person.dto.CityPopulationDto (p.address.city, count(p)) from Citizen p group by p.address.city order by count(p) desc")
+	@Query(value = "select new telran.java52.person.dto.CityPopulationDto (p.address.city, count(p)) from Person p group by p.address.city order by count(p) desc")
 	List<CityPopulationDto> getCitiesPopulation();
 
+@Query(value = "select p from Child p")
+	Stream<Person> findAllChildren();
+
+@Query(value = "select e from Employee e where e.salary between ?1 and ?2")
+Stream<Person> findEmployeesBySalary(Integer minSalary, Integer maxSalary);
+	
 }
